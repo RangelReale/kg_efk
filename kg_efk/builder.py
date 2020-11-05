@@ -4,6 +4,7 @@ from kubragen import KubraGen
 from kubragen.builder import Builder
 from kubragen.data import ValueData
 from kubragen.exception import InvalidParamError, InvalidNameError
+from kubragen.helper import QuotedStr
 from kubragen.kdatahelper import KDataHelper_Volume
 from kubragen.object import ObjectItem, Object
 from kubragen.types import TBuild, TBuildItem
@@ -284,6 +285,11 @@ class EFKBuilder(Builder):
                             }
                         },
                         'spec': {
+                            'volumes': [
+                                KDataHelper_Volume.info(base_value={
+                                    'name': 'data',
+                                }, value=self.option_get('kubernetes.volumes.elasticsearch-data')),
+                            ],
                             'containers': [{
                                 'name': 'elasticsearch',
                                 'image': self.option_get('container.elasticsearch'),
@@ -305,8 +311,16 @@ class EFKBuilder(Builder):
                                     'name': 'cluster.name',
                                     'value': self.object_name('elasticsearch-statefulset'),
                                 },
+                                # {
+                                #     'name': 'node.name',
+                                #     'valueFrom': {
+                                #         'fieldRef': {
+                                #             'fieldPath': 'metadata.name'
+                                #         }
+                                #     },
+                                # },
                                 {
-                                    'name': 'node.name',
+                                    'name': 'NODE_NAME',
                                     'valueFrom': {
                                         'fieldRef': {
                                             'fieldPath': 'metadata.name'
@@ -314,17 +328,20 @@ class EFKBuilder(Builder):
                                     },
                                 },
                                 {
+                                    'name': 'node.name',
+                                    'value': QuotedStr('$(NODE_NAME).{}'.format(self.object_name('elasticsearch-service'))),
+                                },
+                                {
                                     'name': 'discovery.seed_hosts',
                                     'value': ','.join(['{}-{}.{}'.format(
                                         self.object_name('elasticsearch-statefulset'), rpl, self.object_name('elasticsearch-service'))
                                         for rpl in range(self.option_get('config.elasticsearch_replicas'))
                                     ]),
-                                    # 'xvalue': 'es-cluster-0.elasticsearch,es-cluster-1.elasticsearch,es-cluster-2.elasticsearch',
                                 },
                                 {
                                     'name': 'cluster.initial_master_nodes',
-                                    'value': ','.join(['{}-{}'.format(
-                                        self.object_name('elasticsearch-statefulset'), rpl)
+                                    'value': ','.join(['{}-{}.{}'.format(
+                                        self.object_name('elasticsearch-statefulset'), rpl, self.object_name('elasticsearch-service'))
                                         for rpl in range(self.option_get('config.elasticsearch_replicas'))
                                     ]),
                                 },
@@ -335,7 +352,6 @@ class EFKBuilder(Builder):
                                 }],
                                 'resources': ValueData(value=self.option_get('kubernetes.resources.elasticsearch-statefulset'),
                                                        disabled_if_none=True),
-
                             }],
                             'initContainers': [{
                                 'name': 'fix-permissions',
@@ -382,11 +398,6 @@ class EFKBuilder(Builder):
                             }]
                         }
                     },
-                    'volumes': [
-                        KDataHelper_Volume.info(base_value={
-                            'name': 'data',
-                        }, value=self.option_get('kubernetes.volumes.elasticsearch-data')),
-                    ],
                 }
             },
             name=self.BUILDITEM_ELASTICSEARCH_STATEFULSET, source=self.SOURCE_NAME, instance=self.basename()),
