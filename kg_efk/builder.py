@@ -242,15 +242,15 @@ class EFKBuilder(Builder):
                 'kind': 'Service',
                 'apiVersion': 'v1',
                 'metadata': {
-                    'name': self.basename('elasticsearch-service'),
+                    'name': self.object_name('elasticsearch-service'),
                     'namespace': self.namespace(),
                     'labels': {
-                        'app': self.basename('elasticsearch-pod-label-app'),
+                        'app': self.object_name('elasticsearch-pod-label-app'),
                     }
                 },
                 'spec': {
                     'selector': {
-                        'app': self.basename('elasticsearch-pod-label-app'),
+                        'app': self.object_name('elasticsearch-pod-label-app'),
                     },
                     'clusterIP': 'None',
                     'ports': [{
