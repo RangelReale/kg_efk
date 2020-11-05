@@ -385,7 +385,7 @@ class EFKBuilder(Builder):
                     'volumes': [
                         KDataHelper_Volume.info(base_value={
                             'name': 'data',
-                        }, kdata=self.option_get('kubernetes.volumes.elasticsearch-data')),
+                        }, value=self.option_get('kubernetes.volumes.elasticsearch-data')),
                     ],
                 }
             },
