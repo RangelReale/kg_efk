@@ -1,7 +1,5 @@
 from kubragen import KubraGen
-from kubragen.consts import PROVIDER_GOOGLE, PROVIDERSVC_GOOGLE_GKE
-from kubragen.object import Object
-from kubragen.option import OptionRoot
+from kubragen.consts import PROVIDER_GOOGLE, PROVIDERSVC_GOOGLE_GKE, PROVIDER_K3D, PROVIDERSVC_GENERIC
 from kubragen.options import Options
 from kubragen.output import OutputProject, OD_FileTemplate, OutputFile_ShellScript, OutputFile_Kubernetes, \
     OutputDriver_Print, OutputDriver_Directory
@@ -9,7 +7,7 @@ from kubragen.provider import Provider
 
 from kg_efk import EFKBuilder, EFKOptions
 
-kg = KubraGen(provider=Provider(PROVIDER_GOOGLE, PROVIDERSVC_GOOGLE_GKE), options=Options({
+kg = KubraGen(provider=Provider(PROVIDER_K3D, PROVIDERSVC_GENERIC), options=Options({
     'namespaces': {
         'mon': 'app-monitoring',
     },

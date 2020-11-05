@@ -2,6 +2,7 @@ from typing import Optional, Sequence
 
 from kubragen import KubraGen
 from kubragen.builder import Builder
+from kubragen.consts import PROVIDER_K3D
 from kubragen.data import ValueData
 from kubragen.exception import InvalidParamError, InvalidNameError
 from kubragen.helper import QuotedStr
@@ -450,7 +451,12 @@ class EFKBuilder(Builder):
                                 {
                                     'name': 'FLUENTD_SYSTEMD_CONF',
                                     'value': 'disable'
-                                }],
+                                },
+                                ValueData(value={
+                                    'name': 'FLUENT_CONTAINER_TAIL_PARSER_TYPE',
+                                    'value': '/^(?<time>.+) (?<stream>stdout|stderr) [^ ]* (?<log>.*)$/',
+                                    # }, enabled=self.kubragen.provider.provider == PROVIDER_K3D or self.kubragen.provider.provider == PROVIDER_K3S)],
+                                }, enabled=self.kubragen.provider.provider == PROVIDER_K3D)],
                                 'volumeMounts': [{
                                     'name': 'varlog',
                                     'mountPath': '/var/log'
@@ -538,6 +544,22 @@ class EFKBuilder(Builder):
                                     'ports': [{
                                         'containerPort': 5601
                                     }],
+                                    # 'livenessProbe': {
+                                    #     'httpGet': {
+                                    #         'path': '/api/status',
+                                    #         'port': 5601,
+                                    #     },
+                                    #     'initialDelaySeconds': 5,
+                                    #     'timeoutSeconds': 10,
+                                    # },
+                                    # 'readinessProbe': {
+                                    #     'httpGet': {
+                                    #         'path': '/api/status',
+                                    #         'port': 5601,
+                                    #     },
+                                    #     'initialDelaySeconds': 5,
+                                    #     'timeoutSeconds': 10,
+                                    # },
                                     'resources': ValueData(
                                         value=self.option_get('kubernetes.resources.kibana-deployment'),
                                         disabled_if_none=True),
