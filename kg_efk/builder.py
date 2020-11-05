@@ -133,14 +133,17 @@ class EFKBuilder(Builder):
             'elasticsearch-service': self.basename('-elasticsearch'),
             'elasticsearch-statefulset': self.basename('-elasticsearch'),
             'elasticsearch-pod-label-app': self.basename('-elasticsearch'),
-            'kibana-service': self.basename('-kibana'),
-            'kibana-deployment': self.basename('-kibana'),
-            'kibana-pod-label-app': self.basename('-kibana'),
             'fluentd-cluster-role': self.basename('-fluentd'),
             'fluentd-cluster-role-binding': self.basename('-fluentd'),
             'fluentd-daemonset': self.basename('-fluentd'),
             'fluentd-pod-label-app': self.basename('-fluentd'),
         })
+        if self.option_get('enable.kibana'):
+            self.object_names_update({
+                'kibana-service': self.basename('-kibana'),
+                'kibana-deployment': self.basename('-kibana'),
+                'kibana-pod-label-app': self.basename('-kibana'),
+            })
 
     def option_get(self, name: str):
         return self.kubragen.option_root_get(self.options, name)
@@ -399,68 +402,7 @@ class EFKBuilder(Builder):
                         }
                     },
                 }
-            },
-            name=self.BUILDITEM_ELASTICSEARCH_STATEFULSET, source=self.SOURCE_NAME, instance=self.basename()),
-            Object({
-                'apiVersion': 'v1',
-                'kind': 'Service',
-                'metadata': {
-                    'name': self.object_name('kibana-service'),
-                    'namespace': self.namespace(),
-                    'labels': {
-                        'app': self.object_name('kibana-pod-label-app'),
-                    },
-                },
-                'spec': {
-                    'ports': [{
-                        'port': 5601
-                    }],
-                    'selector': {
-                        'app': self.object_name('kibana-pod-label-app'),
-                    }
-                }
-            }, name=self.BUILDITEM_KIBANA_SERVICE, source=self.SOURCE_NAME, instance=self.basename()),
-            Object({
-                'apiVersion': 'apps/v1',
-                'kind': 'Deployment',
-                'metadata': {
-                    'name': self.object_name('kibana-deployment'),
-                    'namespace': self.namespace(),
-                    'labels': {
-                        'app': self.object_name('kibana-pod-label-app'),
-                    }
-                },
-                'spec': {
-                    # 'replicas': 1,
-                    'selector': {
-                        'matchLabels': {
-                            'app': self.object_name('kibana-pod-label-app'),
-                        }
-                    },
-                    'template': {
-                        'metadata': {
-                            'labels': {
-                                'app': self.object_name('kibana-pod-label-app'),
-                            }
-                        },
-                        'spec': {
-                            'containers': [{
-                                'name': 'kibana',
-                                'image': self.option_get('container.kibana'),
-                                'env': [{
-                                    'name': 'ELASTICSEARCH_URL',
-                                    'value': 'http://{}:9200'.format(self.object_name('elasticsearch-service')),
-                                }],
-                                'ports': [{
-                                    'containerPort': 5601
-                                }],
-                                'resources': ValueData(value=self.option_get('kubernetes.resources.kibana-deployment'),
-                                                       disabled_if_none=True),
-                            }]
-                        }
-                    }
-                }
-            }, name=self.BUILDITEM_KIBANA_DEPLOYMENT, source=self.SOURCE_NAME, instance=self.basename()),
+            }, name=self.BUILDITEM_ELASTICSEARCH_STATEFULSET, source=self.SOURCE_NAME, instance=self.basename()),
             Object({
                 'apiVersion': 'apps/v1',
                 'kind': 'DaemonSet',
@@ -540,5 +482,70 @@ class EFKBuilder(Builder):
                 }
             }, name=self.BUILDITEM_FLUENTD_DAEMONSET, source=self.SOURCE_NAME, instance=self.basename()),
         ])
+
+        if self.option_get('enable.kibana'):
+            ret.extend([
+                Object({
+                    'apiVersion': 'v1',
+                    'kind': 'Service',
+                    'metadata': {
+                        'name': self.object_name('kibana-service'),
+                        'namespace': self.namespace(),
+                        'labels': {
+                            'app': self.object_name('kibana-pod-label-app'),
+                        },
+                    },
+                    'spec': {
+                        'ports': [{
+                            'port': 5601
+                        }],
+                        'selector': {
+                            'app': self.object_name('kibana-pod-label-app'),
+                        }
+                    }
+                }, name=self.BUILDITEM_KIBANA_SERVICE, source=self.SOURCE_NAME, instance=self.basename()),
+                Object({
+                    'apiVersion': 'apps/v1',
+                    'kind': 'Deployment',
+                    'metadata': {
+                        'name': self.object_name('kibana-deployment'),
+                        'namespace': self.namespace(),
+                        'labels': {
+                            'app': self.object_name('kibana-pod-label-app'),
+                        }
+                    },
+                    'spec': {
+                        # 'replicas': 1,
+                        'selector': {
+                            'matchLabels': {
+                                'app': self.object_name('kibana-pod-label-app'),
+                            }
+                        },
+                        'template': {
+                            'metadata': {
+                                'labels': {
+                                    'app': self.object_name('kibana-pod-label-app'),
+                                }
+                            },
+                            'spec': {
+                                'containers': [{
+                                    'name': 'kibana',
+                                    'image': self.option_get('container.kibana'),
+                                    'env': [{
+                                        'name': 'ELASTICSEARCH_HOSTS',
+                                        'value': 'http://{}:9200'.format(self.object_name('elasticsearch-service')),
+                                    }],
+                                    'ports': [{
+                                        'containerPort': 5601
+                                    }],
+                                    'resources': ValueData(
+                                        value=self.option_get('kubernetes.resources.kibana-deployment'),
+                                        disabled_if_none=True),
+                                }]
+                            }
+                        }
+                    }
+                }, name=self.BUILDITEM_KIBANA_DEPLOYMENT, source=self.SOURCE_NAME, instance=self.basename()),
+            ])
 
         return ret

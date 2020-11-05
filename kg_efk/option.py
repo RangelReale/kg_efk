@@ -44,6 +44,10 @@ class EFKOptions(Options):
           - whether to bind roles to service account
           - bool
           - ```True```
+        * - enable |rarr| kibana
+          - whether to enable the kibana deployment
+          - bool
+          - ```True```
         * - container |rarr| elasticsearch
           - elasticsearch container image
           - str
@@ -91,10 +95,13 @@ class EFKOptions(Options):
                     'roles_bind': OptionDef(required=True, default_value=True, allowed_types=[bool]),
                 },
             },
+            'enable': {
+                'kibana': OptionDef(required=True, default_value=True, allowed_types=[bool]),
+            },
             'container': {
-                'elasticsearch': OptionDef(required=True, default_value='docker.elastic.co/elasticsearch/elasticsearch:7.2.0', allowed_types=[str]),
-                'kibana': OptionDef(required=True, default_value='docker.elastic.co/kibana/kibana:7.2.0', allowed_types=[str]),
-                'fluentd': OptionDef(required=True, default_value='fluent/fluentd-kubernetes-daemonset:v1.4.2-debian-elasticsearch-1.1', allowed_types=[str]),
+                'elasticsearch': OptionDef(required=True, default_value='docker.elastic.co/elasticsearch/elasticsearch:7.9.3', allowed_types=[str]),
+                'kibana': OptionDef(required=True, default_value='docker.elastic.co/kibana/kibana:7.9.3', allowed_types=[str]),
+                'fluentd': OptionDef(required=True, default_value='fluent/fluentd-kubernetes-daemonset:v1.11.4-debian-elasticsearch7-1.0', allowed_types=[str]),
             },
             'kubernetes': {
                 'volumes': {
