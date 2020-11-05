@@ -28,6 +28,10 @@ class EFKOptions(Options):
           - number of elasticsearch replicas
           - int
           - ```3```
+        * - config |rarr| probes
+          - whether to enable liveness / rediness probes
+          - bool
+          - ```True```
         * - config |rarr| authorization |rarr| serviceaccount_create
           - whether to create a service account
           - bool
@@ -88,6 +92,7 @@ class EFKOptions(Options):
             'namespace': OptionDef(required=True, default_value='monitoring', allowed_types=[str]),
             'config': {
                 'elasticsearch_replicas': OptionDef(required=True, default_value=3, allowed_types=[int]),
+                'probes': OptionDef(required=True, default_value=True, allowed_types=[bool]),
                 'authorization': {
                     'serviceaccount_create': OptionDef(required=True, default_value=True, allowed_types=[bool]),
                     'serviceaccount_use': OptionDef(allowed_types=[str]),
