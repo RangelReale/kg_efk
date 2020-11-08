@@ -129,7 +129,7 @@ class EFKBuilder(Builder):
             if serviceaccount_name is None:
                 raise InvalidParamError('To bind roles a service account is required')
 
-        self.object_names_update({
+        self.object_names_init({
             'service-account': serviceaccount_name,
             'elasticsearch-service': self.basename('-elasticsearch'),
             'elasticsearch-statefulset': self.basename('-elasticsearch'),
@@ -140,7 +140,7 @@ class EFKBuilder(Builder):
             'fluentd-pod-label-app': self.basename('-fluentd'),
         })
         if self.option_get('enable.kibana'):
-            self.object_names_update({
+            self.object_names_init({
                 'kibana-service': self.basename('-kibana'),
                 'kibana-deployment': self.basename('-kibana'),
                 'kibana-pod-label-app': self.basename('-kibana'),
