@@ -23,7 +23,7 @@ class EFKOptions(Options):
         * - namespace
           - namespace
           - str
-          - ```monitoring```
+          - ```default```
         * - config |rarr| elasticsearch_replicas
           - number of elasticsearch replicas
           - int
@@ -32,6 +32,10 @@ class EFKOptions(Options):
           - whether to enable liveness / rediness probes
           - bool
           - ```True```
+        * - config |rarr| kkibana_service_port
+          - Kibana service port
+          - int
+          - ```80```
         * - config |rarr| authorization |rarr| serviceaccount_create
           - whether to create a service account
           - bool
