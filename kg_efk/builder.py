@@ -26,6 +26,8 @@ class EFKBuilder(Builder):
           - description
         * - BUILD_ACCESSCONTROL
           - creates service account, roles, and roles bindings
+        * - BUILD_CONFIG
+          - creates configurations
         * - BUILD_SERVICE
           - creates StatefulSet and Services
 
@@ -98,6 +100,7 @@ class EFKBuilder(Builder):
     SOURCE_NAME = 'kg_efk'
 
     BUILD_ACCESSCONTROL: TBuild = 'accesscontrol'
+    BUILD_CONFIG: TBuild = 'config'
     BUILD_SERVICE: TBuild = 'service'
 
     BUILDITEM_SERVICE_ACCOUNT: TBuildItem = 'service-account'
@@ -156,7 +159,7 @@ class EFKBuilder(Builder):
         return self._namespace
 
     def build_names(self) -> Sequence[TBuild]:
-        return [self.BUILD_ACCESSCONTROL, self.BUILD_SERVICE]
+        return [self.BUILD_ACCESSCONTROL, self.BUILD_CONFIG, self.BUILD_SERVICE]
 
     def build_names_required(self) -> Sequence[TBuild]:
         ret = [self.BUILD_SERVICE]
@@ -180,6 +183,8 @@ class EFKBuilder(Builder):
     def internal_build(self, buildname: TBuild) -> Sequence[ObjectItem]:
         if buildname == self.BUILD_ACCESSCONTROL:
             return self.internal_build_accesscontrol()
+        elif buildname == self.BUILD_CONFIG:
+            return self.internal_build_config()
         elif buildname == self.BUILD_SERVICE:
             return self.internal_build_service()
         else:
@@ -238,6 +243,10 @@ class EFKBuilder(Builder):
             ])
 
         return ret
+
+    def internal_build_config(self) -> Sequence[ObjectItem]:
+        # Reserve for future use
+        return []
 
     def internal_build_service(self) -> Sequence[ObjectItem]:
         ret = []
@@ -315,14 +324,6 @@ class EFKBuilder(Builder):
                                     'name': 'cluster.name',
                                     'value': self.object_name('elasticsearch-statefulset'),
                                 },
-                                # {
-                                #     'name': 'node.name',
-                                #     'valueFrom': {
-                                #         'fieldRef': {
-                                #             'fieldPath': 'metadata.name'
-                                #         }
-                                #     },
-                                # },
                                 {
                                     'name': 'NODE_NAME',
                                     'valueFrom': {
