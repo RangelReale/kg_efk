@@ -89,10 +89,11 @@ class EFKOptions(Options):
         """
         return {
             'basename': OptionDef(required=True, default_value='efk', allowed_types=[str]),
-            'namespace': OptionDef(required=True, default_value='monitoring', allowed_types=[str]),
+            'namespace': OptionDef(required=True, default_value='default', allowed_types=[str]),
             'config': {
                 'elasticsearch_replicas': OptionDef(required=True, default_value=3, allowed_types=[int]),
                 'probes': OptionDef(required=True, default_value=True, allowed_types=[bool]),
+                'kibana_service_port': OptionDef(required=True, default_value=80, allowed_types=[int]),
                 'authorization': {
                     'serviceaccount_create': OptionDef(required=True, default_value=True, allowed_types=[bool]),
                     'serviceaccount_use': OptionDef(allowed_types=[str]),

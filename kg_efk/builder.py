@@ -503,7 +503,8 @@ class EFKBuilder(Builder):
                     },
                     'spec': {
                         'ports': [{
-                            'port': 5601
+                            'port': self.option_get('config.kibana_service_port'),
+                            'targetPort': 5601,
                         }],
                         'selector': {
                             'app': self.object_name('kibana-pod-label-app'),
