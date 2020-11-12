@@ -285,7 +285,7 @@ class EFKBuilder(Builder):
                 },
                 'spec': {
                     'serviceName': self.object_name('elasticsearch-service'),
-                    'replicas': self.option_get('config.elasticsearch_replicas'),
+                    'replicas': self.option_get('config.elasticsearch.replicas'),
                     'selector': {
                         'matchLabels': {
                             'app': self.object_name('elasticsearch-pod-label-app'),
@@ -340,14 +340,14 @@ class EFKBuilder(Builder):
                                     'name': 'discovery.seed_hosts',
                                     'value': ','.join(['{}-{}.{}'.format(
                                         self.object_name('elasticsearch-statefulset'), rpl, self.object_name('elasticsearch-service'))
-                                        for rpl in range(self.option_get('config.elasticsearch_replicas'))
+                                        for rpl in range(self.option_get('config.elasticsearch.replicas'))
                                     ]),
                                 },
                                 {
                                     'name': 'cluster.initial_master_nodes',
                                     'value': ','.join(['{}-{}.{}'.format(
                                         self.object_name('elasticsearch-statefulset'), rpl, self.object_name('elasticsearch-service'))
-                                        for rpl in range(self.option_get('config.elasticsearch_replicas'))
+                                        for rpl in range(self.option_get('config.elasticsearch.replicas'))
                                     ]),
                                 },
                                 {
@@ -503,7 +503,7 @@ class EFKBuilder(Builder):
                     },
                     'spec': {
                         'ports': [{
-                            'port': self.option_get('config.kibana_service_port'),
+                            'port': self.option_get('config.kibana.service_port'),
                             'targetPort': 5601,
                         }],
                         'selector': {

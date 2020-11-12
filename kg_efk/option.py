@@ -24,15 +24,15 @@ class EFKOptions(Options):
           - namespace
           - str
           - ```default```
-        * - config |rarr| elasticsearch_replicas
-          - number of elasticsearch replicas
-          - int
-          - ```3```
         * - config |rarr| probes
           - whether to enable liveness / rediness probes
           - bool
           - ```True```
-        * - config |rarr| kkibana_service_port
+        * - config |rarr| elasticsearch |rarr| replicas
+          - number of elasticsearch replicas
+          - int
+          - ```3```
+        * - config |rarr| kkibana |rarr| service_port
           - Kibana service port
           - int
           - ```80```
@@ -95,9 +95,13 @@ class EFKOptions(Options):
             'basename': OptionDef(required=True, default_value='efk', allowed_types=[str]),
             'namespace': OptionDef(required=True, default_value='default', allowed_types=[str]),
             'config': {
-                'elasticsearch_replicas': OptionDef(required=True, default_value=3, allowed_types=[int]),
                 'probes': OptionDef(required=True, default_value=False, allowed_types=[bool]),
-                'kibana_service_port': OptionDef(required=True, default_value=80, allowed_types=[int]),
+                'elasticsearch': {
+                    'replicas': OptionDef(required=True, default_value=3, allowed_types=[int]),
+                },
+                'kibana': {
+                    'service_port': OptionDef(required=True, default_value=80, allowed_types=[int]),
+                },
                 'authorization': {
                     'serviceaccount_create': OptionDef(required=True, default_value=True, allowed_types=[bool]),
                     'serviceaccount_use': OptionDef(allowed_types=[str]),
