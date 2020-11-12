@@ -99,18 +99,18 @@ class EFKBuilder(Builder):
 
     SOURCE_NAME = 'kg_efk'
 
-    BUILD_ACCESSCONTROL: TBuild = 'accesscontrol'
-    BUILD_CONFIG: TBuild = 'config'
-    BUILD_SERVICE: TBuild = 'service'
+    BUILD_ACCESSCONTROL = TBuild('accesscontrol')
+    BUILD_CONFIG = TBuild('config')
+    BUILD_SERVICE = TBuild('service')
 
-    BUILDITEM_SERVICE_ACCOUNT: TBuildItem = 'service-account'
-    BUILDITEM_ELASTICSEARCH_SERVICE: TBuildItem = 'elasticsearch-service'
-    BUILDITEM_ELASTICSEARCH_STATEFULSET: TBuildItem = 'elasticsearch-statefulset'
-    BUILDITEM_KIBANA_DEPLOYMENT: TBuildItem = 'kibana-deployment'
-    BUILDITEM_KIBANA_SERVICE: TBuildItem = 'kibana-service'
-    BUILDITEM_FLUENTD_CLUSTER_ROLE: TBuildItem = 'fluentd-cluster-role'
-    BUILDITEM_FLUENTD_CLUSTER_ROLE_BINDING: TBuildItem = 'fluentd-cluster-role-binding'
-    BUILDITEM_FLUENTD_DAEMONSET: TBuildItem = 'fluentd-daemonset'
+    BUILDITEM_SERVICE_ACCOUNT = TBuildItem('service-account')
+    BUILDITEM_ELASTICSEARCH_SERVICE = TBuildItem('elasticsearch-service')
+    BUILDITEM_ELASTICSEARCH_STATEFULSET = TBuildItem('elasticsearch-statefulset')
+    BUILDITEM_KIBANA_DEPLOYMENT = TBuildItem('kibana-deployment')
+    BUILDITEM_KIBANA_SERVICE = TBuildItem('kibana-service')
+    BUILDITEM_FLUENTD_CLUSTER_ROLE = TBuildItem('fluentd-cluster-role')
+    BUILDITEM_FLUENTD_CLUSTER_ROLE_BINDING = TBuildItem('fluentd-cluster-role-binding')
+    BUILDITEM_FLUENTD_DAEMONSET = TBuildItem('fluentd-daemonset')
 
     def __init__(self, kubragen: KubraGen, options: Optional[EFKOptions] = None):
         super().__init__(kubragen)

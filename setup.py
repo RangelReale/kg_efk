@@ -24,6 +24,8 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/RangelReale/kg_efk",
     packages=setuptools.find_packages(),
+    package_data={'kg_efk': ['py.typed']},
+    zip_safe=False,
     install_requires=INSTALL_REQUIRES,
     test_suite="tests",
     classifiers=[
